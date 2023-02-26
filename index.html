@@ -30,43 +30,162 @@
    </style>
 </head>
 <body>
-   <main>
-      <div id="app" class="container">
-         <header>
-            <h1 v-text="sitename"></h1>
-         </header>
-         <div class="row product">
-            <div class="col-xs-12 col-sm-12 col-md-3">
-               <figure class="my">
-                  <img v-bind:src="product.image" alt="Here mb img">
-               </figure>
-            </div>
-            <div class="col-xs-12 col-sm-8 col-md-6">
-               <h1 v-text="product.title"> </h1>
-               <p v-html="product.description"></p>
-               <p v-text="product.price" class="price"></p>
-               <button v-on:click="addToCart" v-if="canAddToCart" class="btn btn-primary default">
-                  В корзину
-               </button>
-                  <button v-else="canAddToCart" class="btn btn-primary disabled">
-                  Склад пуст
-               </button>
-              
-            </div>
-            <div class="col-xs-12 col-sm-4 col-md-3">
-                  <h4>Корзина</h4>
-                  <span class="glyphicon glyphicon-ok">
-                     {{cartItemCount}}
-                  </span>
-            </div>
-         </div>
-      </div>
-   </main>
+   <div id="app">
+      <header>
+         <h1 v-text="sitename"></h1>
+      </header>
+      <main>
+         <div class="container">
+            <div class="row product">
+               <div v-if="showProduct">
+                  <div class="col-xs-12 col-sm-12 col-md-3">
+                     <figure class="my">
+                        <img v-bind:src="product.image" alt="Here mb img">
+                     </figure>
+                  </div>
+                  <div class="col-xs-12 col-sm-8 col-md-6">
+                     <h1 v-text="product.title"> </h1>
+                     <p v-html="product.description"></p>
+                     <p v-text="product.price" class="price"></p>
+                     <button v-on:click="addToCart" v-if="canAddToCart" class="btn btn-primary default">
+                        В корзину
+                     </button>
+                     <button v-else="canAddToCart" class="btn btn-primary disabled">
+                        Склад пуст
+                     </button>
+                  </div>
+                  <div class="col-xs-12 col-sm-4 col-md-3">
+                     <button v-on:click="showChekout" type="button" class="btn btn-lg btn-default">
+                        <!--<h4>Корзина</h4> -->
+                        <span class="glyphicon glyphicon-ok">
+                           {{cartItemCount}}
+                        </span>
+                        Оформить
+                     </button>
+                  </div>
+               </div> <!-- end of If before else-->
+               <div v-else>
+                  <div class="col-md-6">
+                     <strong>Имя</strong>
+                     <input v-model="order.firstName" class="form-control"> 
+                  </div>
+                  <div class="col-md-6">
+                     <strong>Фамилия</strong>
+                     <input v-model="order.lastName" class="form-control">
+                  </div>
+
+                  <div class="form-group">
+                     <div class="col-md-12">
+                        <strong>Адрес:</strong>
+                     </div>
+                     <div class="col-md-12">
+                        <input v-model="order.address" class="form-control">
+                     </div>
+                  </div>
+                  <div class="form-group">
+                     <div class="col-md-12">
+                        <strong>Город:</strong>
+                     </div>
+                     <div class="col-md-12">
+                        <input v-model="order.city" class="form-control">
+                     </div>
+                  </div>
+                  <div class="form-group">
+                     <div class="col-md-2">
+                        <strong>Регион:</strong>
+                           <select v-model="order.state" class="form-control">
+                              <option disabled value="">Регион</option>
+                              <option>МСК</option>
+                              <option>МО</option>
+                              <option>СПт</option>
+                              <option>ТУЛ</option>
+                           </select>
+                     </div>
+                  </div>
+                  <div class="form-group">
+                     <div class="col-md-6 col-md-offset-4">
+                        <strong>Индекс:</strong>
+                           <input v-model="order.zip" class="form-control">
+                     </div>
+                  </div>
+                  <div class="form-group">
+                     <div class="col-md-6 boxes">
+                        <input type="checkbox"
+                           id="gift"
+                           value="true"
+                           v-model="order.gift"
+                        >
+                        <label for="gift"> В подарочной упаковке</label>
+                     </div>
+                  </div>
+                  <div class="form-group">
+                     <div class="col-md-6 boxes">
+                        <input type="radio"
+                           id="home"
+                           value="Home"
+                           v-model="order.method"
+                        >
+                        <label for="home">Домашний</label>
+                        <input type="radio"
+                           id="business"
+                           value="Business"
+                           v-model="order.method"
+                        >
+                        <label for="business">Рабочий</label>
+                     </div>
+                  </div>
+                  <div class="form-group">
+                     <div class="col-md-6">
+                        <button type="submit" class="btn btn-primary submit"
+                           v-on:click="submitForm">Заказать</button>
+                     </div>
+                  </div>
+                  <div class="form-group">
+                     <div class="col-md-6 boxes">
+                        <input type="checkbox"
+                           id="gift" value="true"
+                           v-bind:true-value="order.sendGift"
+                           v-bind:false-value="order.dontSendGift"
+                           v-model="order.gift"
+                        >
+                        <label for="gift">Ship As Gift?</label>
+                     </div>
+                  </div>
+                  <div class="col-md-12 verify">
+                     <pre>
+                        Имя: {{order.firstName}}
+                        Фамилия: {{order.lastName}}
+                        Адрес: {{order.address}}
+                        Город: {{order.city}}
+                        Индекс: {{order.zip}}
+                        Регион: {{order.state}}
+                        Домашний/рабочий адрес: {{order.method}}
+                        Упаковка: {{order.gift}}
+                     </pre>
+                  </div>
+               </div> <!--end v_else-->
+            </div> <!--end of row-->
+         </div> <!--end of container-->
+      </main>
+   </div>
    <script>
       var webstore = new Vue ({
          el: '#app',
          data: {
             sitename: "Your Pet Shop",
+            showProduct: true,
+            order:{
+               firstName: '',
+               lastName: '',
+               address:'',
+               city:'',
+               zip:'',
+               state:'',
+               method:'Home',
+               gift: 'Send As A Gift',
+               sendGift: 'Send As A Gift',
+               dontSendGift: 'Do Not Send As A Gift'
+            },
             product: {
                id: 1001,
                title: "Вкусняшка для вашей кошки",
@@ -76,12 +195,17 @@
                availableInventory: 5
             },
             cart: [
-            
             ],
          },
          methods: {
             addToCart: function () {
                this.cart.push (this.product.id);
+            },
+            showChekout () {
+               this.showProduct = this.showProduct ? false : true;
+            },
+            submitForm () {
+               alert('Кнопка пока отключена');
             }
          },
          computed: {
