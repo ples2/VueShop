@@ -36,12 +36,12 @@
             <h1 v-text="sitename"></h1>
          </header>
          <div class="row product">
-            <div class="col-xs-3">
+            <div class="col-xs-12 col-sm-12 col-md-3">
                <figure class="my">
                   <img v-bind:src="product.image" alt="Here mb img">
                </figure>
             </div>
-            <div class="col-xs-8">
+            <div class="col-xs-12 col-sm-8 col-md-6">
                <h1 v-text="product.title"> </h1>
                <p v-html="product.description"></p>
                <p v-text="product.price" class="price"></p>
@@ -53,7 +53,7 @@
                </button>
               
             </div>
-            <div class="col-xs-1">
+            <div class="col-xs-12 col-sm-4 col-md-3">
                   <h4>Корзина</h4>
                   <span class="glyphicon glyphicon-ok">
                      {{cartItemCount}}
