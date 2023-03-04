@@ -284,9 +284,9 @@
                priceArray.splice(index + 3, 0, ",");	//#F
                index += 4;	//#F
              }	//#F
-             return "$" + priceArray.reverse().join("");	//#G
+             return priceArray.reverse().join("")+" руб.";	//#G
            } else {
-             return "$" + (price / 100).toFixed(2);	//#H
+             return  (price / 100).toFixed(2)+" руб.";	//#H
            }
          }
  
@@ -325,7 +325,7 @@
        },	//#G
        beforeDestroyed: function () { 	//#H
          if (APP_LOG_LIFECYCLE_EVENTS) { 	//#H
-           console.log("beforeDestroyed "); 	//#H
+           console.log("beforeDestroyed "); 	//#Hv
          } 	//#H
        },	//#H
        destroyed: function () { 	//#I
