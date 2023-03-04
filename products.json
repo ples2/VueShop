@@ -1,6 +1,43 @@
 {
   "products":[
    
+
+    {
+      "id": 1002,
+      "title": "Клубок пряжи",
+      "description": "Ваш котёнок будет играть с этим клубком <strong>весь</strong> день!",
+      "price": 299,
+      "image": "assets/images/yarn.jpg",
+      "availableInventory": 7,
+      "rating": 1
+    },
+    {
+      "id": 1003,
+      "title": "Кошачий туалет",
+      "description": "Прекрасный наполнитель для кошачьего туалета",
+      "price": 1100,
+      "image": "assets/images/cat-litter.jpg",
+      "availableInventory": 30,
+      "rating": 4
+    },
+    {
+      "id": 1004,
+      "title": "Домик для кошек",
+      "description": "Место, где ваш котёнок будет играть",
+      "price": 799,
+      "image": "assets/images/cat-house.jpg",
+      "availableInventory": 11,
+      "rating": 5
+    },
+    {
+      "id": 1005,
+      "title": "Лазерная указка",
+      "description": "Заставьте своего толстого кота двигаться с помощью этого <em>удивительного</em> устройства.",
+      "price": 4999,
+      "image": "assets/images/laser-pointer.jpg",
+      "availableInventory": 15,
+      "rating": 1
+    },
     {
       "id": 1001,
       "title": "Вкусняшка для вашей кошки",
@@ -9,43 +46,6 @@
       "image": "assets/images/product-fullsize.png",
       "availableInventory": 8,
       "rating": 3
-    },
-
-    {
-      "id": 1002,
-      "title": "Yarn",
-      "description": "Yarn your cat can play with for a very <strong>long</strong> time!",
-      "price": 299,
-      "image": "assets/images/yarn.jpg",
-      "availableInventory": 7,
-      "rating": 1
-    },
-    {
-      "id": 1003,
-      "title": "Kitty Litter",
-      "description": "Premium kitty litter for your cat.",
-      "price": 1100,
-      "image": "assets/images/cat-litter.jpg",
-      "availableInventory": 30,
-      "rating": 4
-    },
-    {
-      "id": 1004,
-      "title": "Cat House",
-      "description": "A place for your cat to play!",
-      "price": 799,
-      "image": "assets/images/cat-house.jpg",
-      "availableInventory": 11,
-      "rating": 5
-    },
-    {
-      "id": 1005,
-      "title": "Laser Pointer",
-      "description": "Drive your cat crazy with this <em>amazing</em> product.",
-      "price": 4999,
-      "image": "assets/images/laser-pointer.jpg",
-      "availableInventory": 15,
-      "rating": 1
     }
   ]
 }
