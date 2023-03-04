@@ -41,7 +41,7 @@
            </div>
            <div class="nav navbar-nav navbar-right cart">
              <button type="button" class="btn btn-default btn-lg" v-on:click="showCheckout">
-               <span class="glyphicon glyphicon-shopping-cart">{{ cartItemCount}}</span> Checkout
+               <span class="glyphicon glyphicon-shopping-cart">{{ cartItemCount}}</span> Оформить
              </button>
            </div>
          </div>
@@ -61,14 +61,14 @@
                  <p class="price">
                    {{product.price | formatPrice}}
                  </p>
-                 <button class=" btn btn-primary btn-lg" v-on:click="addToCart(product)" v-if="canAddToCart(product)">Add to cart</button>
-                 <button disabled="true" class=" btn btn-primary btn-lg" v-else>Add to cart</button>
-                 <span class="inventory-message" v-if="product.availableInventory - cartCount(product.id) === 0">All Out!
+                 <button class=" btn btn-primary btn-lg" v-on:click="addToCart(product)" v-if="canAddToCart(product)">В Корзину</button>
+                 <button disabled="true" class=" btn btn-primary btn-lg" v-else>В корзину</button>
+                 <span class="inventory-message" v-if="product.availableInventory - cartCount(product.id) === 0">Закончилось!
                  </span>
                  <span class="inventory-message" v-else-if="product.availableInventory - cartCount(product.id) < 5">
-                   Only {{product.availableInventory - cartCount(product.id)}} left!
+                   Осталось {{product.availableInventory - cartCount(product.id)}} шт!
                  </span>
-                 <span class="inventory-message" v-else>Buy Now!
+                 <span class="inventory-message" v-else>Купить!
                  </span>
                  <div class="rating">
                    <span v-bind:class="{'rating-active' :checkRating(n, product)}" v-for="n in 5">☆
@@ -92,23 +92,23 @@
                    <div class="form-group">
                      <div class="col-md-12">
                        <h4>
-                         <strong>Enter Your Information</strong>
+                         <strong>Введите информацию о покупателе</strong>
                        </h4>
                      </div>
                    </div>
                    <div class="form-group">
                      <div class="col-md-6">
-                       <strong>First Name:</strong>
+                       <strong>Имя:</strong>
                        <input v-model.trim="order.firstName" class="form-control" />
                      </div>
                      <div class="col-md-6">
-                       <strong>Last Name:</strong>
+                       <strong>Фамилия:</strong>
                        <input v-model.trim="order.lastName" class="form-control" />
                      </div>
                    </div>
                    <div class="form-group">
                      <div class="col-md-12">
-                       <strong>Address:</strong>
+                       <strong>Адрес:</strong>
                      </div>
                      <div class="col-md-12">
                        <input v-model.trim="order.address" class="form-control" />
@@ -116,7 +116,7 @@
                    </div>
                    <div class="form-group">
                      <div class="col-md-12">
-                       <strong>City:</strong>
+                       <strong>Город:</strong>
                      </div>
                      <div class="col-md-12">
                        <input v-model.trim="order.city" class="form-control" />
@@ -124,9 +124,9 @@
                    </div>
                    <div class="form-group">
                      <div class="col-md-2">
-                       <strong>State:</strong>
+                       <strong>Регион:</strong>
                        <select v-model="order.state" class="form-control">
-                         <option disabled value="">State</option>
+                         <option disabled value="">Регион</option>
                          <option v-for="(state, key) in states" v-bind:value="state">
                            {{key}}
                          </option>
@@ -135,7 +135,7 @@
                    </div>
                    <div class="form-group">
                      <div class="col-md-6 col-md-offset-4">
-                       <strong>Zip / Postal Code:</strong>
+                       <strong>Индекс:</strong>
                        <input v-model.number="order.zip" class="form-control" type="number" />
                      </div>
                    </div>
@@ -143,36 +143,36 @@
                      <div class="col-md-6 boxes">
                        <input type="checkbox" id="gift" value="true" v-bind:true-value="order.sendGift" v-bind:false-value="order.dontSendGift"
                          v-model="order.gift">
-                       <label for="gift">Ship As Gift?</label>
+                       <label for="gift">Отравить как подарок</label>
                      </div>
                    </div>
                    <!-- end of form-group -->
                    <div class="form-group">
                      <div class="col-md-6 boxes">
                        <input type="radio" id="home" v-bind:value="order.home" v-model="order.method">
-                       <label for="home">Home</label>
+                       <label for="home">Домашний</label>
                        <input type="radio" id="business" v-bind:value="order.business" v-model="order.method">
-                       <label for="business">Business</label>
+                       <label for="business">Рабочий</label>
                      </div>
                    </div>
                    <!-- end of form-group-->
                    <div class="form-group">
                      <div class="col-md-6">
-                       <button type="submit" class="btn btn-primary submit" v-on:click="submitForm">Place Order</button>
+                       <button type="submit" class="btn btn-primary submit" v-on:click="submitForm">Заказать</button>
                      </div>
                      <!-- end of col-md-6-->
                    </div>
                    <!-- end of form-group-->
                    <div class="col-md-12 verify">
                      <pre>
-                         First Name: {{order.firstName}}
-                         Last Name: {{order.lastName}}
-                         Address: {{order.address}}
-                         City: {{order.city}}
-                         Zip: {{order.zip}}
-                         State: {{order.state}}
-                         Method: {{order.method}}
-                         Gift: {{order.gift}}
+                         Имя: {{order.firstName}}
+                         Фамилия: {{order.lastName}}
+                         Адрес: {{order.address}}
+                         Город: {{order.city}}
+                         Индекс: {{order.zip}}
+                         Регион: {{order.state}}
+                         Дом/Рабоч: {{order.method}}
+                         Подарок: {{order.gift}}
                        </pre>
                    </div>
                    <!-- end of col-md-12 verify-->
@@ -202,11 +202,11 @@
          showProduct: true,
          a: false,
          states: {
-           AL: 'Alabama',
-           AK: 'Alaska',
-           AR: 'Arizona',
-           CA: 'California',
-           NV: 'Nevada'
+           MO: 'Московская обл.',
+           MSK: 'Москва',
+           SPT: 'Санкт-Петербург',
+           TUL: 'Тула',
+           RSD: 'Ростов на Дону'
          },
          order: {
            firstName: '',
@@ -215,12 +215,12 @@
            city: '',
            zip: '',
            state: '',
-           method: 'Home Address',
-           business: 'Business Address',
-           home: 'Home Address',
+           method: 'На домашний адресс',
+           business: 'На рабочий адрес',
+           home: 'На домашний адрес',
            gift: '',
-           sendGift: 'Send As A Gift',
-           dontSendGift: 'Do Not Send As A Gift'
+           sendGift: 'В подарочной упаковке',
+           dontSendGift: 'В обычной упаковке'
          },
          products: {},
          cart: []
