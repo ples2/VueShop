@@ -17,7 +17,8 @@
    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
    <!-- Последняя компиляция и сжатый JavaScript -->  
    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
-  
+   <!--Axios for JSON-->
+   <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.3.4/axios.js"></script>
    <!-- My CSS-->
    <link href="assets/css/app.css" rel="stylesheet" type="text/css">
    
@@ -29,194 +30,311 @@
       }
    </style>
 </head>
-<body>
-   <div id="app">
-      <header>
-         <h1 v-text="sitename"></h1>
-      </header>
-      <main>
-         <div class="container">
-            <div class="row product">
-               <div v-if="showProduct">
-                  <div class="col-xs-12 col-sm-12 col-md-3">
-                     <figure class="my">
-                        <img v-bind:src="product.image" alt="Here mb img">
-                     </figure>
-                  </div>
-                  <div class="col-xs-12 col-sm-8 col-md-6">
-                     <h1 v-text="product.title"> </h1>
-                     <p v-html="product.description"></p>
-                     <p v-text="product.price" class="price"></p>
-                     <button v-on:click="addToCart" v-if="canAddToCart" class="btn btn-primary default">
-                        В корзину
-                     </button>
-                     <button v-else="canAddToCart" class="btn btn-primary disabled">
-                        Склад пуст
-                     </button>
-                  </div>
-                  <div class="col-xs-12 col-sm-4 col-md-3">
-                     <button v-on:click="showChekout" type="button" class="btn btn-lg btn-default">
-                        <!--<h4>Корзина</h4> -->
-                        <span class="glyphicon glyphicon-ok">
-                           {{cartItemCount}}
-                        </span>
-                        Оформить
-                     </button>
-                  </div>
-               </div> <!-- end of If before else-->
-               <div v-else>
-                  <div class="col-md-6">
-                     <strong>Имя</strong>
-                     <input v-model="order.firstName" class="form-control"> 
-                  </div>
-                  <div class="col-md-6">
-                     <strong>Фамилия</strong>
-                     <input v-model="order.lastName" class="form-control">
-                  </div>
 
-                  <div class="form-group">
+<body>
+   <div class="container">
+     <div id="app">
+       <header>
+         <div class="navbar navbar-default">
+           <div class="navbar-header">
+             <h1>{{ sitename }}</h1>
+           </div>
+           <div class="nav navbar-nav navbar-right cart">
+             <button type="button" class="btn btn-default btn-lg" v-on:click="showCheckout">
+               <span class="glyphicon glyphicon-shopping-cart">{{ cartItemCount}}</span> Checkout
+             </button>
+           </div>
+         </div>
+       </header>
+       <main>
+         <div v-if="showProduct">
+           <div v-for="product in sortedProducts">
+             <div class="row">
+               <div class="col-md-5 col-md-offset-0">
+                 <figure>
+                   <img class="product" v-bind:src="product.image">
+                 </figure>
+               </div>
+               <div class="col-md-6 col-md-offset-0 description">
+                 <h1 v-text="product.title"></h1>
+                 <p v-html="product.description"></p>
+                 <p class="price">
+                   {{product.price | formatPrice}}
+                 </p>
+                 <button class=" btn btn-primary btn-lg" v-on:click="addToCart(product)" v-if="canAddToCart(product)">Add to cart</button>
+                 <button disabled="true" class=" btn btn-primary btn-lg" v-else>Add to cart</button>
+                 <span class="inventory-message" v-if="product.availableInventory - cartCount(product.id) === 0">All Out!
+                 </span>
+                 <span class="inventory-message" v-else-if="product.availableInventory - cartCount(product.id) < 5">
+                   Only {{product.availableInventory - cartCount(product.id)}} left!
+                 </span>
+                 <span class="inventory-message" v-else>Buy Now!
+                 </span>
+                 <div class="rating">
+                   <span v-bind:class="{'rating-active' :checkRating(n, product)}" v-for="n in 5">☆
+                   </span>
+                 </div>
+               </div>
+               <!-- end of col-md-6-->
+             </div>
+             <!-- end of row-->
+             <hr />
+           </div>
+           <!-- end of v-for-->
+         </div>
+         <!-- end of showProduct-->
+         <div v-else>
+           <div class="row">
+             <div class="col-md-10 col-md-offset-1">
+               <div class="panel panel-info">
+                 <div class="panel-heading">Pet Depot Checkout</div>
+                 <div class="panel-body">
+                   <div class="form-group">
                      <div class="col-md-12">
-                        <strong>Адрес:</strong>
+                       <h4>
+                         <strong>Enter Your Information</strong>
+                       </h4>
                      </div>
-                     <div class="col-md-12">
-                        <input v-model="order.address" class="form-control">
-                     </div>
-                  </div>
-                  <div class="form-group">
-                     <div class="col-md-12">
-                        <strong>Город:</strong>
-                     </div>
-                     <div class="col-md-12">
-                        <input v-model="order.city" class="form-control">
-                     </div>
-                  </div>
-                  <div class="form-group">
-                     <div class="col-md-2">
-                        <strong>Регион:</strong>
-                           <select v-model="order.state" class="form-control">
-                              <option disabled value="">Регион</option>
-                              <option>МСК</option>
-                              <option>МО</option>
-                              <option>СПт</option>
-                              <option>ТУЛ</option>
-                           </select>
-                     </div>
-                  </div>
-                  <div class="form-group">
-                     <div class="col-md-6 col-md-offset-4">
-                        <strong>Индекс:</strong>
-                           <input v-model="order.zip" class="form-control">
-                     </div>
-                  </div>
-                  <div class="form-group">
-                     <div class="col-md-6 boxes">
-                        <input type="checkbox"
-                           id="gift"
-                           value="true"
-                           v-model="order.gift"
-                        >
-                        <label for="gift"> В подарочной упаковке</label>
-                     </div>
-                  </div>
-                  <div class="form-group">
-                     <div class="col-md-6 boxes">
-                        <input type="radio"
-                           id="home"
-                           value="Home"
-                           v-model="order.method"
-                        >
-                        <label for="home">Домашний</label>
-                        <input type="radio"
-                           id="business"
-                           value="Business"
-                           v-model="order.method"
-                        >
-                        <label for="business">Рабочий</label>
-                     </div>
-                  </div>
-                  <div class="form-group">
+                   </div>
+                   <div class="form-group">
                      <div class="col-md-6">
-                        <button type="submit" class="btn btn-primary submit"
-                           v-on:click="submitForm">Заказать</button>
+                       <strong>First Name:</strong>
+                       <input v-model.trim="order.firstName" class="form-control" />
                      </div>
-                  </div>
-                  <div class="form-group">
+                     <div class="col-md-6">
+                       <strong>Last Name:</strong>
+                       <input v-model.trim="order.lastName" class="form-control" />
+                     </div>
+                   </div>
+                   <div class="form-group">
+                     <div class="col-md-12">
+                       <strong>Address:</strong>
+                     </div>
+                     <div class="col-md-12">
+                       <input v-model.trim="order.address" class="form-control" />
+                     </div>
+                   </div>
+                   <div class="form-group">
+                     <div class="col-md-12">
+                       <strong>City:</strong>
+                     </div>
+                     <div class="col-md-12">
+                       <input v-model.trim="order.city" class="form-control" />
+                     </div>
+                   </div>
+                   <div class="form-group">
+                     <div class="col-md-2">
+                       <strong>State:</strong>
+                       <select v-model="order.state" class="form-control">
+                         <option disabled value="">State</option>
+                         <option v-for="(state, key) in states" v-bind:value="state">
+                           {{key}}
+                         </option>
+                       </select>
+                     </div>
+                   </div>
+                   <div class="form-group">
+                     <div class="col-md-6 col-md-offset-4">
+                       <strong>Zip / Postal Code:</strong>
+                       <input v-model.number="order.zip" class="form-control" type="number" />
+                     </div>
+                   </div>
+                   <div class="form-group">
                      <div class="col-md-6 boxes">
-                        <input type="checkbox"
-                           id="gift" value="true"
-                           v-bind:true-value="order.sendGift"
-                           v-bind:false-value="order.dontSendGift"
-                           v-model="order.gift"
-                        >
-                        <label for="gift">Ship As Gift?</label>
+                       <input type="checkbox" id="gift" value="true" v-bind:true-value="order.sendGift" v-bind:false-value="order.dontSendGift"
+                         v-model="order.gift">
+                       <label for="gift">Ship As Gift?</label>
                      </div>
-                  </div>
-                  <div class="col-md-12 verify">
+                   </div>
+                   <!-- end of form-group -->
+                   <div class="form-group">
+                     <div class="col-md-6 boxes">
+                       <input type="radio" id="home" v-bind:value="order.home" v-model="order.method">
+                       <label for="home">Home</label>
+                       <input type="radio" id="business" v-bind:value="order.business" v-model="order.method">
+                       <label for="business">Business</label>
+                     </div>
+                   </div>
+                   <!-- end of form-group-->
+                   <div class="form-group">
+                     <div class="col-md-6">
+                       <button type="submit" class="btn btn-primary submit" v-on:click="submitForm">Place Order</button>
+                     </div>
+                     <!-- end of col-md-6-->
+                   </div>
+                   <!-- end of form-group-->
+                   <div class="col-md-12 verify">
                      <pre>
-                        Имя: {{order.firstName}}
-                        Фамилия: {{order.lastName}}
-                        Адрес: {{order.address}}
-                        Город: {{order.city}}
-                        Индекс: {{order.zip}}
-                        Регион: {{order.state}}
-                        Домашний/рабочий адрес: {{order.method}}
-                        Упаковка: {{order.gift}}
-                     </pre>
-                  </div>
-               </div> <!--end v_else-->
-            </div> <!--end of row-->
-         </div> <!--end of container-->
-      </main>
+                         First Name: {{order.firstName}}
+                         Last Name: {{order.lastName}}
+                         Address: {{order.address}}
+                         City: {{order.city}}
+                         Zip: {{order.zip}}
+                         State: {{order.state}}
+                         Method: {{order.method}}
+                         Gift: {{order.gift}}
+                       </pre>
+                   </div>
+                   <!-- end of col-md-12 verify-->
+                 </div>
+                 <!--end of panel-body-->
+               </div>
+               <!--end of panel panel-info-->
+ 
+ 
+             </div>
+             <!--end of col-md-10 col-md-offset-1-->
+           </div>
+           <!--end of row-->
+         </div>
+       </main>
+     </div>
+     <!-- end of app-->
    </div>
-   <script>
-      var webstore = new Vue ({
-         el: '#app',
-         data: {
-            sitename: "Your Pet Shop",
-            showProduct: true,
-            order:{
-               firstName: '',
-               lastName: '',
-               address:'',
-               city:'',
-               zip:'',
-               state:'',
-               method:'Home',
-               gift: 'Send As A Gift',
-               sendGift: 'Send As A Gift',
-               dontSendGift: 'Do Not Send As A Gift'
-            },
-            product: {
-               id: 1001,
-               title: "Вкусняшка для вашей кошки",
-               description: "250 гр. <em>восхитительного</em>, "+"натурального мяса",
-               price: "200 руб",
-               image: "assets/images/product-fullsize.png",
-               availableInventory: 5
-            },
-            cart: [
-            ],
+ 
+ 
+   <script type="text/javascript">
+     var APP_LOG_LIFECYCLE_EVENTS = true;
+     var webstore = new Vue({
+       el: '#app',
+       data: {
+         sitename: "Vue.js Pet Depot",
+         showProduct: true,
+         a: false,
+         states: {
+           AL: 'Alabama',
+           AK: 'Alaska',
+           AR: 'Arizona',
+           CA: 'California',
+           NV: 'Nevada'
          },
-         methods: {
-            addToCart: function () {
-               this.cart.push (this.product.id);
-            },
-            showChekout () {
-               this.showProduct = this.showProduct ? false : true;
-            },
-            submitForm () {
-               alert('Кнопка пока отключена');
-            }
+         order: {
+           firstName: '',
+           lastName: '',
+           address: '',
+           city: '',
+           zip: '',
+           state: '',
+           method: 'Home Address',
+           business: 'Business Address',
+           home: 'Home Address',
+           gift: '',
+           sendGift: 'Send As A Gift',
+           dontSendGift: 'Do Not Send As A Gift'
          },
-         computed: {
-            cartItemCount: function () {
-               return this.cart.length || 0;
-            },
-            canAddToCart: function () {
-               return this.product.availableInventory > this.cartItemCount;
-            } 
+         products: {},
+         cart: []
+       },
+       methods: {
+         checkRating(n, myProduct) {
+           return myProduct.rating - n >= 0;
+         },
+         addToCart(aProduct) {
+           this.cart.push(aProduct.id);
+         },
+         showCheckout() {
+           this.showProduct = this.showProduct ? false : true;
+         },
+         submitForm() {
+           alert('Submitted');
+         },
+         canAddToCart(aProduct) {
+           //return this.product.availableInventory > this.cartItemCount;
+           return aProduct.availableInventory > this.cartCount(aProduct.id);
+         },
+         cartCount(id) {
+           let count = 0;
+           for (var i = 0; i < this.cart.length; i++) {
+             if (this.cart[i] === id) {
+               count++;
+             }
+           }
+           return count;
          }
-      })
+       },
+       computed: {
+         cartItemCount() {
+           return this.cart.length || '';
+         },
+         sortedProducts() {
+           if (this.products.length > 0) {
+             let productsArray = this.products.slice(0);
+             console.log(productsArray);
+             console.log(this.products);
+             function compare(a, b) {
+               if (a.title.toLowerCase() < b.title.toLowerCase())
+                 return -1;
+               if (a.title.toLowerCase() > b.title.toLowerCase())
+                 return 1;
+               return 0;
+             }
+             return productsArray.sort(compare);
+           }
+ 
+         }
+       },
+       filters: {
+         formatPrice(price) {	//#B
+           if (!parseInt(price)) { return ""; }	//#C
+           if (price > 99999) {	//#D
+             var priceString = (price / 100).toFixed(2);	//#E
+             var priceArray = priceString.split("").reverse();	//#F
+             var index = 3;	//#F
+             while (priceArray.length > index + 3) {	//#F
+               priceArray.splice(index + 3, 0, ",");	//#F
+               index += 4;	//#F
+             }	//#F
+             return "$" + priceArray.reverse().join("");	//#G
+           } else {
+             return "$" + (price / 100).toFixed(2);	//#H
+           }
+         }
+ 
+       },
+       beforeCreate: function () {	//#B
+         if (APP_LOG_LIFECYCLE_EVENTS) {	//#B
+           console.log("beforeCreate");	//#B
+         }	//#B
+       },	//#B
+       created: function () {	//#C
+         axios.get('./products.json')
+           .then((response) => {
+             this.products = response.data.products;
+             console.log(this.products);
+           });
+       },	//#C
+       beforeMount: function () {	//#D
+         if (APP_LOG_LIFECYCLE_EVENTS) {	//#D
+           console.log(" beforeMount");	//#D
+         }	//#D
+       },	//#D
+       mounted: function () {	//#E
+         if (APP_LOG_LIFECYCLE_EVENTS) {	//#E
+           console.log(" mounted"); 	//#E
+         } 	//#E
+       },	//#E
+       beforeUpdate: function () { 	//#F
+         if (APP_LOG_LIFECYCLE_EVENTS) { 	//#F
+           console.log("beforeUpdate"); 	//#F
+         } 	//#F
+       },	//#F
+       updated: function () { 	//#G
+         if (APP_LOG_LIFECYCLE_EVENTS) { 	//#G
+           console.log("updated"); 	//#G
+         } 	//#G
+       },	//#G
+       beforeDestroyed: function () { 	//#H
+         if (APP_LOG_LIFECYCLE_EVENTS) { 	//#H
+           console.log("beforeDestroyed "); 	//#H
+         } 	//#H
+       },	//#H
+       destroyed: function () { 	//#I
+         if (APP_LOG_LIFECYCLE_EVENTS) { 	//#I
+           console.log("destroyed"); 	//#I
+         } 	//#I
+       }	//#I
+     });
    </script>
-</body>
+ </body>
+ 
 </html>
