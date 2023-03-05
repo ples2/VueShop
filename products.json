@@ -23,7 +23,7 @@
     {
       "id": 1004,
       "title": "Домик для кошек",
-      "description": "Место, где ваш котёнок будет играть. И может быть спать.",
+      "description": "Место, где ваш котёнок будет играть. И, может быть, спать.",
       "price": 799,
       "image": "assets/images/cat-house.jpg",
       "availableInventory": 11,
